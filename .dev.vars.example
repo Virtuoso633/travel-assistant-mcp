@@ -23,3 +23,6 @@ FP_CLIENT_SECRET="your_fiberplane_client_secret_here"
 # Development Settings
 NODE_ENV="development"
 DEBUG="true"
+
+
+FREE_CURRENCY_API_KEY=DEFAULT_KEY

@@ -69,7 +69,7 @@ export const expenseTools = [
         const expenseDate = date === 'today' ? new Date().toISOString().split('T')[0] : date;
         
         // Get real-time currency conversion to USD
-        const conversionData = await convertCurrencyReal(amount, currency, 'USD');
+        const conversionData = await convertCurrencyReal(amount, currency, 'USD', env);
         
         // Ensure user exists first
         await ensureUserExists(db, userId);
@@ -280,7 +280,7 @@ export const expenseTools = [
         }
         
         // Get real-time conversion
-        const conversionData = await convertCurrencyReal(amount, fromCurrency, toCurrency);
+        const conversionData = await convertCurrencyReal(amount, fromCurrency, toCurrency, env);
         
         // Award points for currency conversion (2 points)
         let pointsResult = null;
@@ -390,7 +390,7 @@ export const expenseTools = [
         // Convert all expenses to base currency using real rates
         const convertedExpenses = await Promise.all(
           allExpenses.map(async (expense: any) => {
-            const conversion = await convertCurrencyReal(expense.amount, expense.currency, baseCurrency);
+            const conversion = await convertCurrencyReal(expense.amount, expense.currency, baseCurrency, env);
             return {
               ...expense,
               convertedAmount: conversion.convertedAmount,
@@ -459,7 +459,7 @@ export const expenseTools = [
 /**
  * Convert currency using FreeCurrencyAPI - gets rate and does manual calculation
  */
-async function convertCurrencyReal(amount: number, fromCurrency: string, toCurrency: string) {
+async function convertCurrencyReal(amount: number, fromCurrency: string, toCurrency: string, env: any) {
   try {
     console.log(`💱 Converting ${amount} ${fromCurrency} to ${toCurrency} using FreeCurrencyAPI`);
     
@@ -472,7 +472,8 @@ async function convertCurrencyReal(amount: number, fromCurrency: string, toCurre
     }
     
     // Get exchange rate from FreeCurrencyAPI
-    const url = `https://api.freecurrencyapi.com/v1/latest?apikey=***REMOVED***&base_currency=${fromCurrency}&currencies=${toCurrency}`;
+    const apiKey = env.FREE_CURRENCY_API_KEY;
+    const url = `https://api.freecurrencyapi.com/v1/latest?apikey=${apiKey}&base_currency=${fromCurrency}&currencies=${toCurrency}`;
     
     const response = await fetch(url, {
       headers: {
@@ -780,7 +781,7 @@ async function getRealExpenseStats(db: any, userId: string, location?: string) {
   let totalUSD = 0;
   for (const expense of filteredExpenses) {
     try {
-      const conversion = await convertCurrencyReal(expense.amount, expense.currency, 'USD');
+      const conversion = await convertCurrencyReal(expense.amount, expense.currency, 'USD', env);
       totalUSD += conversion.convertedAmount;
     } catch (error) {
       console.error(`Error converting ${expense.currency} to USD:`, error);

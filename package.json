@@ -1,0 +1,41 @@
+{
+  "name": "travel-assistant-mcp",
+  "version": "1.0.0",
+  "description": "A comprehensive MCP server for travel planning with gamification",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev --local",
+    "deploy": "wrangler deploy",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "wrangler d1 migrations apply travel-assistant-db --local",
+    "db:migrate:prod": "wrangler d1 migrations apply travel-assistant-db",
+    "db:setup": "npm run db:generate && npm run db:migrate",
+    "db:studio": "drizzle-kit studio",
+    "test": "npx @modelcontextprotocol/inspector",
+    "lint": "eslint src --ext .ts",
+    "type-check": "tsc --noEmit",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "keywords": ["mcp", "travel", "assistant", "cloudflare"],
+  "author": "Sanket_D",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "@hono/node-server": "^1.18.0",
+    "@modelcontextprotocol/sdk": "^1.17.1",
+    "ai": "^5.0.0",
+    "better-auth": "^1.3.4",
+    "drizzle-orm": "^0.44.4",
+    "google-auth-library": "^10.2.0",
+    "hono": "^4.8.10"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250801.0",
+    "@types/node": "^24.1.0",
+    "drizzle-kit": "^0.31.4",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2",
+    "wrangler": "^4.27.0"
+  }
+}

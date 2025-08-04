@@ -1,0 +1,19 @@
+name = "travel-assistant-mcp"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[vars]
+NODE_ENV = "production"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "travel-assistant-db"
+database_id = "bbea8807-3aca-45bf-afbc-d13988df28e1"
+migrations_dir = "src/db/migrations"
+
+[env.development]
+[[env.development.d1_databases]]
+binding = "DB"
+database_name = "travel-assistant-db-dev"
+database_id = "bbea8807-3aca-45bf-afbc-d13988df28e1"
+migrations_dir = "src/db/migrations"

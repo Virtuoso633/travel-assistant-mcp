@@ -94,7 +94,7 @@ export const expenseTools = [
         const pointsResult = await awardPoints(env.DB, userId, 5, `expense_${category}_${amount}${currency}`);
         
         // Get real expense statistics
-        const stats = await getRealExpenseStats(db, userId, location);
+        const stats = await getRealExpenseStats(db, userId, env, location);
         
         const result = {
           success: true,
@@ -175,7 +175,7 @@ export const expenseTools = [
         console.log(`💱 Getting live exchange rates for ${baseCurrency}`);
         
         // Get real-time rates from FreeCurrencyAPI
-        const rates = await getLiveExchangeRates(baseCurrency);
+        const rates = await getLiveExchangeRates(baseCurrency, env);
         
         // Filter for requested currencies
         const filteredRates = targetCurrencies.reduce((acc: any, currency: string) => {
@@ -515,13 +515,14 @@ async function convertCurrencyReal(amount: number, fromCurrency: string, toCurre
 /**
  * Get live exchange rates from FreeCurrencyAPI
  */
-async function getLiveExchangeRates(baseCurrency: string) {
+async function getLiveExchangeRates(baseCurrency: string, env: any) {
   try {
     console.log(`💱 Getting live rates from FreeCurrencyAPI for ${baseCurrency}`);
     
     // Get all major currencies from FreeCurrencyAPI
     const currencies = 'USD,EUR,GBP,JPY,CAD,AUD,CHF,CNY,INR,KRW,MXN,BRL,SGD,HKD';
-    const url = `https://api.freecurrencyapi.com/v1/latest?apikey=***REMOVED***&base_currency=${baseCurrency}&currencies=${currencies}`;
+    const apiKey = env.FREE_CURRENCY_API_KEY;
+    const url = `https://api.freecurrencyapi.com/v1/latest?apikey=${apiKey}&base_currency=${baseCurrency}&currencies=${currencies}`;
     
     const response = await fetch(url, {
       headers: {
@@ -767,7 +768,7 @@ async function ensureUserExists(db: any, userId: string) {
   }
 }
 
-async function getRealExpenseStats(db: any, userId: string, location?: string) {
+async function getRealExpenseStats(db: any, userId: string, env: any, location?: string) {
   const userExpenses = await db
     .select()
     .from(expenses)
